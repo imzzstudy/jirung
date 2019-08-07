@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <title>글쓰기</title>
+</head>
+
+<body>
+    <%if(board){%>
+        <form method="post" action="/board/update">
+            <input type="hidden" value="<%=board._id%>" name="boardId">
+    <%}else{%>
+        <form method="post" action="/board/write">
+    <%}%>
+  
+
+        <h1>글쓰기</h1>
+        <h5>Welcome to 글쓰기</h5>
+        <div>제목 : <input type= "text" name="title"></div>
+        <div>내용 : <textarea name="contents"></textarea></div>
+        <div>
+            <input type= "submit" value="확인">
+            <input class="ui button" type="button" value="취소" name="" onclick="javascript:history.back()" />
+        </div>
+    </form>
+        
+    </body>
+</html>

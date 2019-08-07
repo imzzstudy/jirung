@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script type="text/javascript">
+           function updateComment(boardId, i){
+               $('#comm'+i).attr('style', "display:none;");
+               $('#btup'+i).attr('style', "display:none;");
+               $('#btsa'+i).show();
+               var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "text");
+				hiddenField.setAttribute("name", "updateCo");
+                hiddenField.setAttribute("id","updateCo");
+				hiddenField.setAttribute("value", $('#comm'+i).html());
+				$('#commp'+i).append(hiddenField);
+               
+               
+           }
+          function deleteComment(boardId, commentId){
+
+				var form = document.createElement("form");
+				form.setAttribute("charset", "UTF-8");
+				form.setAttribute("method", "Post");  //Post 방식
+				form.setAttribute("action", "/board/comment/delete"); //요청 보낼 주소
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "boardId");
+				hiddenField.setAttribute("value", boardId);
+				form.appendChild(hiddenField);
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "commentId");
+				hiddenField.setAttribute("value", commentId);
+				form.appendChild(hiddenField);
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+           function saveComment(boardId, commentId){
+               var form = document.createElement("form");
+				form.setAttribute("charset", "UTF-8");
+				form.setAttribute("method", "Post");  //Post 방식
+				form.setAttribute("action", "/board/comment/save"); //요청 보낼 주소
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "boardId");
+				hiddenField.setAttribute("value",boardId);
+				form.appendChild(hiddenField);
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "commentId");
+				hiddenField.setAttribute("value", commentId);
+				form.appendChild(hiddenField);
+               
+               var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "text");
+				hiddenField.setAttribute("name", "updateCo");
+               hiddenField.setAttribute("value", $('#updateCo').val());
+				form.append(hiddenField);
+
+				document.body.appendChild(form);
+				form.submit();
+               
+               
+           }
+          
+      function updateBoard(boardId){
+				var form = document.createElement("form");
+				form.setAttribute("charset", "UTF-8");
+				form.setAttribute("method", "Get");  //Post 방식
+				form.setAttribute("action", "/board/update"); //요청 보낼 주소
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "boardId");
+				hiddenField.setAttribute("value", boardId);
+				form.appendChild(hiddenField);
+          
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+          function deleteBoard(boardId){
+				var form = document.createElement("form");
+				form.setAttribute("charset", "UTF-8");
+				form.setAttribute("method", "Post");  //Post 방식
+				form.setAttribute("action", "/board/delete"); //요청 보낼 주소
+
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", "boardId");
+				hiddenField.setAttribute("value", boardId);
+				form.appendChild(hiddenField);
+
+				document.body.appendChild(form);
+				form.submit();
+			}
+          
+      </script>
+  </head>
+  <body>
+   <% if (board.writer._id == session.user.objId) {%>
+            <input type="button" value="수정"  onclick="updateBoard('<%=board._id%>')"> 
+            <input type="button" value="삭제" onclick="deleteBoard('<%=board._id%>')">
+    <%}%>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+      <h1>제목 : <%=board.title%> </h1>
+      <h3>작성자 : <%=board.writer.name%> </h3>
+      <h3>내용 : <%=board.contents%> </h3>
+    <hr>
+   
+    <% if (board.comments !== null) { //보드의 코멘트가 비어있지 않다면
+        var comment = board.comments; //변수 코멘트에 값을 넣어주고
+          for(var i = 0; i < board.comments.length; i++) {%>
+    <h4>작성자 : <%=comment[i].writer.name%></h4> 
+    <h4 id='commp<%=i%>'>내용 : <span id='comm<%=i%>'><%=comment[i].content%></span></h4>
+    <% if(comment[i].writer._id == session.user.objId ){ %>
+          <input type="button" value="수정"  id='btup<%=i%>'onclick="updateComment('<%=board._id%>', <%=i%>)"> 
+            <input type="button" value="저장" id='btsa<%=i%>' style="display:none;" display=none onclick="saveComment('<%=board._id%>','<%=comment[i]._id%>')">
+            <input type="button" value="삭제" onclick="deleteComment('<%=board._id%>','<%=comment[i]._id%>')">
+          
+      <% } %>
+    <hr>
+    <%}}%>
+    
+    <form action="/board/comment/write" method="post">
+     <input type="hidden" name="boardId" value="<%=board._id%>">
+      <input type="hidden" name="writer" value="<%=session.user.objId%>">
+      댓글 : <textarea name="content"></textarea><br>
+      <input type="submit" value="확인">
+    </form>
+  </body>
+</html>

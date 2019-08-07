@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <title>index page</title>
+</head>
+
+<body>
+    <div>
+
+        어서오세요  <%=session.user.name%>님
+
+    </div>
+    <div>
+        <a href='/board/write'>글쓰기</a>
+    </div>
+    <div>
+        <% if (board !== null){
+        for(var i = 0; i < board.length; i++) { %>
+        <a href="/board/<%= board[i]._id%>">
+            <h3><%= i+1 %> -  제목 : <%=board[i].title%>
+            | 작성자 : <%=board[i].writer.name%> 
+            
+            </h3>
+        </a>
+        <%  }} %>
+    </div>
+
+    <div>
+        <a href='/users/logout'>로그아웃하기</a>
+    </div>
+</body>
+
+</html>
